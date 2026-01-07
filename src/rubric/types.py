@@ -38,14 +38,14 @@ class LengthPenalty(BaseModel):
     - penalty_at_cap * ((count - free_budget) / (max_cap - free_budget)) ** exponent otherwise
 
     By default, the penalty is subtracted from the final score (which is normalized to 0-1).
-    For training use cases with raw scores, use absolute penalty values (e.g., -50.0).
+    For training use cases with raw scores, use absolute penalty values (e.g., 50.0).
 
     Args:
         free_budget: Number of tokens/words allowed before any penalty applies.
         max_cap: Number of tokens/words at which the maximum penalty is applied.
-        penalty_at_cap: Maximum penalty value. For normalized scores, use fractional values
-            like 0.5 (lose up to 50% of score). For training with raw scores, use absolute
-            values like -50.0 (will be added directly to the raw score).
+        penalty_at_cap: Maximum penalty value (always subtracted from score). For normalized
+            scores, use fractional values like 0.5 (lose up to 50% of score). For training
+            with raw scores, use absolute values like 50.0 (subtract up to 50 points).
         exponent: Controls the penalty curve steepness. Higher = more lenient near free_budget.
         count_fn: Function to count tokens/words in text. If None, uses whitespace word count.
             For accurate token counting, pass a tokenizer-based function like:
@@ -63,7 +63,7 @@ class LengthPenalty(BaseModel):
         >>> penalty = LengthPenalty(
         ...     free_budget=8000,
         ...     max_cap=10000,
-        ...     penalty_at_cap=-50.0,  # Absolute penalty added to raw score
+        ...     penalty_at_cap=50.0,  # Subtract up to 50 points from raw score
         ...     exponent=1.6,
         ... )
         >>>
